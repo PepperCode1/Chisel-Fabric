@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "chisel",
+  "version": "${version}",
+
+  "name": "Chisel for Fabric",
+  "description": "Chisel Description",
+  "authors": [
+    "Team Chisel",
+    "Pepper_Bell"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "GPLv2",
+  "icon": "assets/chisel/textures/item/iron_chisel.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "team.chisel.chisel.Chisel"
+    ],
+    "client": [
+      "team.chisel.chisel.client.ChiselClient"
+    ]
+  },
+  "mixins": [
+    "chisel.mixins.json"
+  ],
+  "accessWidener": "chisel.accesswidener",
+
+  "depends": {
+    "fabricloader": ">=0.8.0",
+    "fabric": "*",
+    "minecraft": "1.16.x",
+    "ctm": "*"
+  }
+}

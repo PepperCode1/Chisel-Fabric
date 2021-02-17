@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "team.chisel.chisel.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "AbstractDecorationEntityAccessor",
+    "EnchantmentScreenHandlerMixin"
+  ],
+  "client": [
+    "client.ClientPlayerInteractionManagerAccessor",
+    "client.EnchantingTableBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {"item": "chisel:diamond_chisel"},
+	{"item": "minecraft:redstone"},
+	{"item": "minecraft:gold_ingot"}
+  ],
+  "result": {
+	"item": "chisel:hitech_chisel"
+  }
+}

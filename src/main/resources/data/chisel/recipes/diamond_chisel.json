@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+	" D",
+	"S "
+  ],
+  "key": {
+	"S": {
+	  "item": "minecraft:stick"
+	},
+	"D": {
+	  "item": "minecraft:diamond"
+	}
+  },
+  "result": {
+	"item": "chisel:diamond_chisel"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "block.chisel.auto_chisel": "Auto Chisel",
+  
+  "itemGroup.chisel.chisel": "Chisel",
+  
+  "item.chisel.iron_chisel": "Iron Chisel",
+  "item.chisel.diamond_chisel": "Diamond Chisel",
+  "item.chisel.hitech_chisel": "iChisel",
+  "item.chisel.offset_tool": "Offset Tool",
+  
+  "subtitles.chisel.chiseling.default": "Block Chiseled",
+  "subtitles.chisel.chiseling.dirt": "Dirt Chiseled",
+  "subtitles.chisel.chiseling.wood": "Wood Chiseled",
+  
+  "tooltip.block": "%1$s (%2$s)",
+  
+  "tooltip.chisel.open_gui": "%s to open GUI",
+  "tooltip.chisel.open_gui.right_click": "Right-click",
+  "tooltip.chisel.in_world": "%s to chisel blocks in the world",
+  "tooltip.chisel.in_world.left_click": "Left-click",
+  "tooltip.chisel.in_inventory": "%s by leaving it in the inventory",
+  "tooltip.chisel.in_inventory.target_block": "Target a block",
+  "tooltip.chisel.modes": "Has multiple chiseling modes",
+  "tooltip.chisel.selected_mode": "Selected mode: %s",
+  
+  "chisel.hitech.button.chisel": "Chisel",
+  "chisel.hitech.button.chisel_all": "Chisel All",
+  
+  "chisel.hitech.preview": "Preview",
+  "chisel.hitech.preview.hollow": "Hollow",
+  "chisel.hitech.preview.panel": "Panel",
+  "chisel.hitech.preview.plus": "Plus",
+  "chisel.hitech.preview.single": "Single",
+  
+  "chisel.mode.single": "Single",
+  "chisel.mode.single.desc": "Chisel a single block.",
+  "chisel.mode.row": "Row",
+  "chisel.mode.row.desc": "Chisel a 1x3 row of blocks.",
+  "chisel.mode.column": "Column",
+  "chisel.mode.column.desc": "Chisel a 3x1 column of blocks.",
+  "chisel.mode.panel": "Panel",
+  "chisel.mode.panel.desc": "Chisel a 3x3 square of blocks.",
+  "chisel.mode.contiguous": "Contiguous",
+  "chisel.mode.contiguous.desc": "Chisel an area of alike blocks, extending 10 blocks in any direction.",
+  "chisel.mode.contiguous_2d": "Contiguous (2D)",
+  "chisel.mode.contiguous_2d.desc": "Chisel an area of alike blocks, extending 10 blocks along the plane of the current side."
+}
