@@ -54,51 +54,58 @@ import team.chisel.chisel.util.ChiselNBT;
 public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> {
 	private static final Identifier TEXTURE = new Identifier(Chisel.MOD_ID, "textures/gui/hitech_chisel.png");
 	private static final Rect2i PREVIEW_AREA = new Rect2i(8, 14, 74, 74);
-	
+
 	private static final BufferBuilder BUFFER = new BufferBuilder(256);
 	private static final MatrixStack MATRIX_STACK = new MatrixStack();
 	private static final Random RANDOM = new Random();
-	
+
 	private @Nullable PreviewModeButton previewButton;
 	private @Nullable AbstractButtonWidget chiselButton;
 	private @Nullable RotateButton rotateButton;
-	
+
 	private DummyBlockRenderView renderView = new DummyBlockRenderView(this);
 	private @Nullable BlockState erroredState;
-	
+
 	private boolean previewClicked;
-	private int clickButton;
-	private int clickX, clickY;
+	private int clickedButton;
+	private int clickX;
+	private int clickY;
 	private long lastDragTime;
-	private double initRotX, initRotY;
-	private double prevRotX, prevRotY;
-	private double momentumX, momentumY;
+	private double initRotX;
+	private double initRotY;
+	private double prevRotX;
+	private double prevRotY;
+	private double momentumX;
+	private double momentumY;
 	private float momentumDampening = 0.98F;
 	private boolean doMomentum = false;
-	private double rotationX = -15, rotationY = 0;
-	private double initZoom, zoom = 0;
+	private double rotationX = -15;
+	private double rotationY = 0;
+	private double initZoom;
+	private double zoom = 0;
 	private int scrollAmount;
-	
+
 	public HitechChiselScreen(HitechChiselScreenHandler screenHandler, PlayerInventory inventory, Text title) {
 		super(screenHandler, inventory, title);
 		backgroundWidth = 256;
 		backgroundHeight = 220;
 	}
-	
+
 	@Override
 	public void init() {
 		super.init();
-		
+
 		int x = this.x + PREVIEW_AREA.getX() - 1;
 		int y = this.y + PREVIEW_AREA.getY() + PREVIEW_AREA.getHeight() + 3;
-		int w = 76, h = 20;
+		int w = 76;
+		int h = 20;
 
 		boolean firstInit = previewButton == null;
 
 		previewButton = new PreviewModeButton(x, y, w, h);
 		addButton(previewButton);
 
-		chiselButton = new ButtonWidget(x, y += h + 2, w, h, ChiselLangKeys.CHISEL_HITECH_BUTTON_CHISEL.getText(), b -> {
+		chiselButton = new ButtonWidget(x, y += h + 2, w, h, ChiselLangKeys.CHISEL_HITECH_BUTTON_CHISEL.getText(), (pressed) -> {
 			Slot target = handler.getTarget();
 			Slot selected = handler.getSelection();
 			if (target != null && target.hasStack() && selected != null && selected.hasStack()) {
@@ -111,8 +118,8 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 				if (hasShiftDown()) {
 					slots = ArrayUtils.addAll(slots, handler.getSelectionDuplicates().stream().mapToInt(slot -> slot.id).toArray());
 				}
-				
-				handler.chiselAll(player, slots); // TODO flashes inventory because inventory update client-side
+
+				handler.chiselAll(player, slots);
 				ClientPlayNetworking.getSender().sendPacket(ClientNetwork.createChiselButtonPacket(slots));
 
 				if (!hasShiftDown()) {
@@ -129,12 +136,12 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 					}
 					handler.setSelection(next);
 				} else {
-					handler.setSelection(selected); // Force duplicate recalc
+					handler.setSelection(selected); // Force recalculation
 				}
 			}
 		});
 		addButton(chiselButton);
-		
+
 		rotateButton = new RotateButton(this.x + PREVIEW_AREA.getX() + PREVIEW_AREA.getWidth() - 16, this.y + PREVIEW_AREA.getY() + PREVIEW_AREA.getHeight() - 16);
 		addButton(rotateButton);
 
@@ -165,7 +172,7 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 			chiselButton.setMessage(ChiselLangKeys.CHISEL_HITECH_BUTTON_CHISEL.getText());
 		}
 	}
-	
+
 	@Override
 	protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -191,8 +198,8 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 		if (rotateButton.getRotate() && momentumX == 0 && momentumY == 0 && !previewClicked && System.currentTimeMillis() - lastDragTime > 2000) {
 			rotationY = initRotY + (delta * 2);
 		}
-		
-		if (previewClicked && clickButton == 0) {
+
+		if (previewClicked && clickedButton == 0) {
 			momentumX = rotationX - prevRotX;
 			momentumY = rotationY - prevRotY;
 			prevRotX = rotationX;
@@ -232,7 +239,7 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 			}
 		}
 	}
-	
+
 	@Override
 	protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
 		if (doMomentum) {
@@ -257,11 +264,10 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 			}
 		}
 
-		String string = ChiselLangKeys.CHISEL_HITECH_PREVIEW.getText().asString();
-		textRenderer.draw(matrices, string, PREVIEW_AREA.getX() + (PREVIEW_AREA.getWidth() / 2) - (textRenderer.getWidth(string) / 2), PREVIEW_AREA.getY() - 9, 0x404040);
-		
+		Text text = ChiselLangKeys.CHISEL_HITECH_PREVIEW.getText();
+		textRenderer.draw(matrices, text, PREVIEW_AREA.getX() + (PREVIEW_AREA.getWidth() / 2) - (textRenderer.getWidth(text) / 2), PREVIEW_AREA.getY() - 9, 0x404040);
+
 		RenderSystem.disableAlphaTest();
-		drawButtonTooltips(matrices, mouseX, mouseY);
 	}
 
 	@Override
@@ -271,7 +277,7 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 			if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				doMomentum = false;
 			}
-			clickButton = button;
+			clickedButton = button;
 			previewClicked = true;
 			clickX = (int) mouseX;
 			clickY = (int) mouseY;
@@ -279,18 +285,18 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
 		if (previewClicked) {
-			if (clickButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			if (clickedButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				rotationX = MathHelper.clamp(initRotX + mouseY - clickY, -90, 90);
 				rotationY = initRotY + mouseX - clickX;
-			} else if (clickButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+			} else if (clickedButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 				zoom = MathHelper.clamp(initZoom + (clickY - mouseY), -17.19, 525); // 0.1-16x
 			}
 		}
-		
+
 		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
 	}
 
@@ -307,53 +313,49 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 
 		return super.mouseReleased(mouseX, mouseY, state);
 	}
-	
+
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+		super.mouseScrolled(mouseX, mouseY, amount);
 		scrollAmount += amount;
 		if (Math.abs(scrollAmount) >= 1) {
-			int idx = -1;
+			int id = -1;
 			if (handler.getTarget() != null) {
-				idx = handler.getTarget().id;
+				id = handler.getTarget().id;
 			}
-			while (Math.abs(scrollAmount) >= 1) {
-				if (scrollAmount > 0) {
-					idx--;
-					scrollAmount -= 1;
-				} else {
-					idx++;
-					scrollAmount += 1;
-				}
-			}
-			if (idx < 0) {
+
+			id -= (int) scrollAmount;
+			scrollAmount = (scrollAmount < 0 ? -1 : 1) * (scrollAmount % 1);
+
+			if (id < 0) {
 				for (int i = handler.getChiselInventory().getSelectionSize() - 1; i >= 0; i--) {
 					if (handler.getSlot(i).hasStack()) {
-						idx = i;
+						id = i;
 						break;
 					}
 					if (i == 0) {
-						idx = 0;
+						id = 0;
 					}
 				}
-			} else if (idx >= handler.getChiselInventory().getSelectionSize() || !handler.getSlot(idx).hasStack()) {
-				idx = 0;
+			} else if (id >= handler.getChiselInventory().getSelectionSize() || !handler.getSlot(id).hasStack()) {
+				id = 0;
 			}
 
-			handler.setTarget(handler.getSlot(idx));
+			handler.setTarget(handler.getSlot(id));
 		}
 		return true;
 	}
-	
+
 	@Override
 	protected Rect2i getModeButtonArea() {
 		int down = 133;
 		int padding = 7;
 		return new Rect2i(this.x + padding, this.y + down + padding, 76, backgroundHeight - down - (padding * 2));
 	}
-	
+
 	private void renderPreview() {
 		client.getTextureManager().bindTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
-		
+
 		RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, true);
 
 		int windowScale = (int) client.getWindow().getScaleFactor();
@@ -391,7 +393,7 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 
 		RenderSystem.viewport(0, 0, client.getWindow().getFramebufferWidth(), client.getWindow().getFramebufferHeight());
 	}
-	
+
 	private void drawSlotHighlight(MatrixStack matrices, Slot slot, int u) {
 		drawTexture(matrices, this.x + slot.x - 1, this.y + slot.y - 1, u, 220, 18, 18);
 	}
@@ -406,36 +408,36 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 		ChiselNBT.setHitechRotate(stack, rotateButton.getRotate());
 		ClientPlayNetworking.getSender().sendPacket(ClientNetwork.createHitechSettingsPacket(handler.getChiselSlot(), previewButton.getType().ordinal(), rotateButton.getRotate()));
 	}
-	
+
 	private class PreviewModeButton extends AbstractButtonWidget {
 		private PreviewType type;
-		
+
 		public PreviewModeButton(int x, int y, int width, int height) {
 			super(x, y, width, height, LiteralText.EMPTY);
 			setType(PreviewType.values()[0]);
 		}
-		
+
 		public PreviewType getType() {
 			return type;
 		}
-		
+
 		private void setType(PreviewType type) {
 			this.type = type;
-			setMessage(new LiteralText("< " + type.getText().getString() + " >"));
+			setMessage(new LiteralText("< ").append(type.getText()).append(new LiteralText(" >")));
 		}
-		
+
 		@Override
 		public void onClick(double mouseX, double mouseY) {
 			setType(PreviewType.values()[(type.ordinal() + 1) % PreviewType.values().length]);
 			updateChiselData();
 		}
-		
+
 		public void onRightClick(double mouseX, double mouseY) {
 			int len = PreviewType.values().length;
 			setType(PreviewType.values()[(type.ordinal() - 1 + len) % len]);
 			updateChiselData();
 		}
-		
+
 		@Override
 		public boolean mouseClicked(double mouseX, double mouseY, int button) { // TODO
 			boolean handled = super.mouseClicked(mouseX, mouseY, button);
@@ -454,14 +456,14 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 			return false;
 		}
 	}
-	
+
 	private class RotateButton extends AbstractButtonWidget {
 		private boolean rotate = true;
-		
+
 		public RotateButton(int x, int y) {
 			super(x, y, 16, 16, LiteralText.EMPTY);
 		}
-		
+
 		public boolean getRotate() {
 			return rotate;
 		}
@@ -481,14 +483,14 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 			setZOffset(0);
 			RenderSystem.color4f(1, 1, 1, 1);
 		}
-		
+
 		@Override
 		public void onClick(double mouseX, double mouseY) {
 			rotate = !rotate;
 			updateChiselData();
 		}
 	}
-	
+
 	private static class DummyBlockRenderView implements BlockRenderView {
 		private final HitechChiselScreen screen;
 		private final LightingProvider light = new LightingProvider(new ChunkProvider() {
@@ -497,18 +499,18 @@ public class HitechChiselScreen extends ChiselScreen<HitechChiselScreenHandler> 
 			public BlockView getChunk(int chunkX, int chunkY) {
 				return DummyBlockRenderView.this;
 			}
-			
+
 			@Override
 			public BlockView getWorld() {
 				return DummyBlockRenderView.this;
 			}
 		}, true, true);
 		private BlockState state = Blocks.AIR.getDefaultState();
-		
+
 		public DummyBlockRenderView(HitechChiselScreen screen) {
 			this.screen = screen;
 		}
-		
+
 		public void setState(BlockState state) {
 			this.state = state;
 		}

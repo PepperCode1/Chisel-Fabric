@@ -51,19 +51,19 @@ import team.chisel.chisel.util.ChiselNBT;
 
 public class ChiselItemImpl extends Item implements ChiselItem {
 	private final ChiselType type;
-	
+
 	public ChiselItemImpl(ChiselType type, Settings settings) {
 		super(applyMaxDamage(type, settings));
 		this.type = type;
 	}
-	
+
 	private static Settings applyMaxDamage(ChiselType type, Settings settings) {
 		if (Configurations.allowChiselDamage) {
 			return settings.maxDamage(type.maxDamage);
 		}
 		return settings;
 	}
-	
+
 	public ChiselType getType() {
 		return type;
 	}
@@ -82,7 +82,7 @@ public class ChiselItemImpl extends Item implements ChiselItem {
 		case IRON:
 			return repairMaterial.getItem().equals(Items.IRON_INGOT);
 		}
-		
+
 		return false;
 	}
 
@@ -116,12 +116,12 @@ public class ChiselItemImpl extends Item implements ChiselItem {
 		});
 		return true;
 	}
-	
+
 	@Override
 	public boolean canOpenGui(PlayerEntity player, World world, Hand hand) {
 		return true;
 	}
-	
+
 	@Override
 	public NamedScreenHandlerFactory getHandlerFactory(PlayerEntity player, World world, Hand hand) {
 		return new ExtendedScreenHandlerFactory() {
@@ -165,7 +165,7 @@ public class ChiselItemImpl extends Item implements ChiselItem {
 	public boolean supportsMode(PlayerEntity player, ItemStack chisel, ChiselMode mode) {
 		return type == ChiselType.HITECH || ((type == ChiselType.DIAMOND || Configurations.ironChiselHasModes) && mode != ChiselModeImpl.CONTIGUOUS && mode != ChiselModeImpl.CONTIGUOUS_2D);
 	}
-	
+
 	public enum ChiselType {
 		IRON(Configurations.ironChiselMaxDamage, Configurations.ironChiselAttackDamage),
 		DIAMOND(Configurations.diamondChiselMaxDamage, Configurations.diamondChiselAttackDamage),

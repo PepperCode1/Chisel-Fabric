@@ -25,7 +25,7 @@ public class TextureContextAR extends TextureContextPosition {
 	public long getCompressedData() {
 		return submapId;
 	}
-	
+
 	public static int getSubmapId(BlockPos pos) {
 		int evenCoords = 0;
 		if (pos.getX() % 2 == 0) {

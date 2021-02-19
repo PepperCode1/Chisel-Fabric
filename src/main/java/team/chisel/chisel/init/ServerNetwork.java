@@ -14,13 +14,13 @@ public class ServerNetwork {
 	public static void init() {
 		ServerPlayNetworking.registerGlobalReceiver(ClientNetwork.CHISEL_MODE, (server, player, handler, buf, responseSender) -> {
 			int slot = buf.readInt();
-			ChiselMode tempMode = ChiselModeRegistry.INSTANCE.getModeByName(buf.readString(256));
-			if (tempMode == null) {
-				tempMode = ChiselModeImpl.SINGLE;
-			}
-			ChiselMode mode = tempMode;
+			String modeName = buf.readString(256);
 
 			server.execute(() -> {
+				ChiselMode mode = ChiselModeRegistry.INSTANCE.getModeByName(modeName);
+				if (mode == null) {
+					mode = ChiselModeImpl.SINGLE;
+				}
 				ItemStack stack = player.inventory.getStack(slot);
 				if (stack.getItem() instanceof ChiselItem && ((ChiselItem) stack.getItem()).supportsMode(player, stack, mode)) {
 					ChiselNBT.setChiselMode(stack, mode);

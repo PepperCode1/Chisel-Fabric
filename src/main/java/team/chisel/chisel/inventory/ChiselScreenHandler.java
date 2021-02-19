@@ -14,6 +14,7 @@ import team.chisel.chisel.api.ChiselItem;
 import team.chisel.chisel.util.ChiselNBT;
 import team.chisel.chisel.util.SoundUtil;
 
+// TODO: Make AbstractChiselScreenHandler
 public class ChiselScreenHandler extends ScreenHandler {
 	protected final PlayerInventory playerInventory;
 	protected final Hand hand;
@@ -25,10 +26,10 @@ public class ChiselScreenHandler extends ScreenHandler {
 	public ChiselScreenHandler(ScreenHandlerType<? extends ChiselScreenHandler> type, int syncId, PlayerInventory playerInventory, Hand hand) {
 		this(type, syncId, playerInventory, hand, new ChiselSelectionInventory(60, hand));
 	}
-	
+
 	public ChiselScreenHandler(ScreenHandlerType<? extends ChiselScreenHandler> type, int syncId, PlayerInventory playerInventory, Hand hand, ChiselSelectionInventory chiselInventory) {
 		super(type, syncId);
-		
+
 		this.playerInventory = playerInventory;
 		this.hand = hand;
 		this.chiselInventory = chiselInventory;
@@ -44,7 +45,7 @@ public class ChiselScreenHandler extends ScreenHandler {
 			this.chiselInventory.updateVariants();
 		}
 	}
-	
+
 	protected void addSlots() {
 		int top = 8;
 		int left = 62;
@@ -94,7 +95,7 @@ public class ChiselScreenHandler extends ScreenHandler {
 				return ItemStack.EMPTY;
 			}
 		}
-		
+
 		currentSlotActionType = actionType;
 		return super.onSlotClick(slotIndex, dragType, actionType, player);
 	}
@@ -115,7 +116,7 @@ public class ChiselScreenHandler extends ScreenHandler {
 			itemStack = itemStack1.copy();
 
 			if (slotIndex > chiselInventory.getSelectionSize()) {
-				if (!insertItem(itemStack1, chiselInventory.getSelectionSize(), chiselInventory.getSelectionSize() + 1, false)) {
+				if (!insertItem(itemStack1, chiselInventory.getInputSlotId(), chiselInventory.getInputSlotId() + 1, false)) {
 					return ItemStack.EMPTY;
 				}
 			} else {
@@ -125,18 +126,18 @@ public class ChiselScreenHandler extends ScreenHandler {
 					if (check.isEmpty()) {
 						return ItemStack.EMPTY;
 					}
-					if (!this.insertItem(check, chiselInventory.getSelectionSize() + 1, chiselInventory.getSelectionSize() + 1 + 36, true)) {
+					if (!this.insertItem(check, chiselInventory.size(), chiselInventory.size() + 36, true)) {
 						return ItemStack.EMPTY;
 					}
 					SoundUtil.playSound(player, chisel, itemStack1);
 					itemStack1 = craft(player, itemStack1, false);
 					itemStack1.decrement(check.getCount());
 					chiselInventory.setInputSlotStack(check);
-				} else if (!insertItem(itemStack1, chiselInventory.getSelectionSize() + 1, chiselInventory.getSelectionSize() + 1 + 36, true)) {
+				} else if (!insertItem(itemStack1, chiselInventory.size(), chiselInventory.size() + 36, true)) {
 					return ItemStack.EMPTY;
 				}
 			}
-			
+
 			boolean clearSlot = slotIndex >= chiselInventory.getSelectionSize() || chiselInventory.getInputSlotStack().isEmpty();
 
 			slot.onStackChanged(itemStack1, itemStack);
@@ -169,34 +170,34 @@ public class ChiselScreenHandler extends ScreenHandler {
 				return itemStack1;
 			}
 		}
-		
+
 		return itemStack;
 	}
-	
+
 	public PlayerInventory getPlayerInventory() {
 		return playerInventory;
 	}
-	
+
 	public Hand getHand() {
 		return hand;
 	}
-	
+
 	public ChiselSelectionInventory getChiselInventory() {
 		return chiselInventory;
 	}
-	
+
 	public int getChiselSlot() {
 		return chiselSlot;
 	}
-	
+
 	public ItemStack getChisel() {
 		return chisel;
 	}
-	
+
 	public SlotActionType getCurrentActionType() {
 		return currentSlotActionType;
 	}
-	
+
 	public Slot getInputSlot() {
 		return getSlot(chiselInventory.getInputSlotId());
 	}
@@ -213,7 +214,7 @@ public class ChiselScreenHandler extends ScreenHandler {
 			playerInventory.main.set(chiselSlot, stack);
 		}
 	}
-	
+
 	public ItemStack craft(PlayerEntity player, ItemStack itemStack, boolean simulate) {
 		ItemStack crafted = chiselInventory.getInputSlotStack();
 		ItemStack chisel = this.chisel;
@@ -247,7 +248,7 @@ public class ChiselScreenHandler extends ScreenHandler {
 				sendContentUpdates();
 			}
 		}
-		
+
 		return result;
 	}
 }

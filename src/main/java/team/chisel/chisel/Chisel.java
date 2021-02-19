@@ -16,7 +16,7 @@ public class Chisel implements ModInitializer {
 	public static final String MOD_ID = "chisel";
 	public static final String RESOURCE_NAMESPACE = "chisel";
 	public static final Logger LOGGER = LogManager.getLogger("chisel");
-	
+
 	@Override
 	public void onInitialize() {
 		SoundEvents.init();

@@ -28,9 +28,10 @@ import team.chisel.chisel.inventory.ChiselInputSlot;
 import team.chisel.chisel.inventory.ChiselScreenHandler;
 import team.chisel.chisel.util.ChiselNBT;
 
+// TODO: Make AbstractChiselScreen
 public class ChiselScreen<T extends ChiselScreenHandler> extends HandledScreen<T> {
-    private static final Identifier TEXTURE = new Identifier(Chisel.MOD_ID, "textures/gui/chisel.png");
-	
+	private static final Identifier TEXTURE = new Identifier(Chisel.MOD_ID, "textures/gui/chisel.png");
+
 	protected final PlayerEntity player;
 
 	public ChiselScreen(T screenHandler, PlayerInventory inventory, Text title) {
@@ -60,16 +61,23 @@ public class ChiselScreen<T extends ChiselScreenHandler> extends HandledScreen<T
 				ChiselModeButton button = new ChiselModeButton(buttonX, buttonY, mode,
 						(pressed) -> {
 							ChiselMode mode1 = ((ChiselModeButton) pressed).getMode();
-							
+
 							ChiselNBT.setChiselMode(chisel, mode1);
 							ClientPlayNetworking.getSender().sendPacket(ClientNetwork.createChiselModePacket(handler.getChiselSlot(), mode1));
-							
+
 							pressed.active = false;
 							for (AbstractButtonWidget other : buttons) {
 								if (other != pressed && other instanceof ChiselModeButton) {
 									other.active = true;
 								}
 							}
+						},
+						(hovered, matrices, mouseX, mouseY) -> {
+							ChiselMode mode1 = ((ChiselModeButton) hovered).getMode();
+							List<OrderedText> lines = new ArrayList<>();
+							lines.add(mode1.getNameText().asOrderedText());
+							lines.addAll(textRenderer.wrapLines(new TranslatableText(mode1.getDescriptionKey()).formatted(Formatting.GRAY), width - mouseX - 20));
+							renderOrderedTooltip(matrices, lines, mouseX, mouseY);
 						}
 				);
 				if (mode == currentMode) {
@@ -91,7 +99,7 @@ public class ChiselScreen<T extends ChiselScreenHandler> extends HandledScreen<T
 	@Override
 	protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		
+
 		client.getTextureManager().bindTexture(TEXTURE);
 		int x = (width - backgroundWidth) / 2;
 		int y = (height - backgroundHeight) / 2;
@@ -102,24 +110,18 @@ public class ChiselScreen<T extends ChiselScreenHandler> extends HandledScreen<T
 			drawSlotOverlay(this, matrices, x + 14, y + 14, inputSlot, 0, backgroundHeight, 60);
 		}
 	}
-	
+
 	@Override
 	protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-		// TODO fix String
+		// TODO: Fix title
 		List<OrderedText> lines = textRenderer.wrapLines(title, 40);
 		int y = 60;
-		for (OrderedText text : lines) {
-			textRenderer.draw(matrices, text, 32 - textRenderer.getWidth(text) / 2, y, 0x404040);
+		for (OrderedText line : lines) {
+			textRenderer.draw(matrices, line, 32 - textRenderer.getWidth(line) / 2, y, 0x404040);
 			y += 10;
 		}
-
-		drawButtonTooltips(matrices, mouseX, mouseY);
-//		if (showMode()) {
-//			line = I18n.format(this.container.inventory.getInventoryName() + ".mode");
-//			fontRendererObj.drawString(line, fontRendererObj.getStringWidth(line) / 2 + 6, 85, 0x404040);
-//		}
 	}
 
 	@Override
@@ -139,18 +141,6 @@ public class ChiselScreen<T extends ChiselScreenHandler> extends HandledScreen<T
 		int down = 73;
 		int padding = 7;
 		return new Rect2i(x + padding, y + down + padding, 50, backgroundHeight - down - (padding * 2));
-	}
-	
-	protected void drawButtonTooltips(MatrixStack matrices, int mouseX, int mouseY) {
-		for (AbstractButtonWidget button : buttons) {
-			if (button instanceof ChiselModeButton && button.isHovered()) {
-				ChiselMode mode = ((ChiselModeButton) button).getMode();
-				List<OrderedText> lines = new ArrayList<>();
-				lines.add(mode.getNameText().asOrderedText());
-				lines.addAll(textRenderer.wrapLines(new TranslatableText(mode.getDescriptionKey()).formatted(Formatting.GRAY), width - mouseX - 20));
-				renderOrderedTooltip(matrices, lines, mouseX - x, mouseY - y);
-			}
-		}
 	}
 
 	public static void drawSlotOverlay(HandledScreen<?> screen, MatrixStack matrices, int x, int y, Slot slot, int u, int v, int padding) {

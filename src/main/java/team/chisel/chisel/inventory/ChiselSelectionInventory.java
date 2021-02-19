@@ -44,7 +44,7 @@ public class ChiselSelectionInventory implements Inventory {
 
 	@Override
 	public ItemStack getStack(int slot) {
-		return isSlotValid(slot) ? this.stacks.get(slot) : ItemStack.EMPTY;
+		return stacks.get(slot);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class ChiselSelectionInventory implements Inventory {
 				if (stack.getCount() == 0) {
 					setStack(slot, ItemStack.EMPTY);
 				}
-				
+
 				onInventoryUpdate(slot);
 
 				return split;
@@ -103,31 +103,27 @@ public class ChiselSelectionInventory implements Inventory {
 	public boolean isValid(int slot, ItemStack stack) {
 		return slot == inputSlotId && (stack.isEmpty() || !(stack.getItem() instanceof ChiselItemImpl));
 	}
-	
-	public boolean isSlotValid(int slot) {
-		return slot >= 0 && slot < this.stacks.size();
-	}
-	
+
 	public int getActiveVariants() {
 		return activeVariants;
 	}
-	
+
 	public int getSelectionSize() {
 		return selectionSize;
 	}
-	
+
 	public int getInputSlotId() {
 		return inputSlotId;
 	}
 
 	public ItemStack getInputSlotStack() {
-		return stacks.get(inputSlotId);
+		return getStack(inputSlotId);
 	}
-	
+
 	public void setInputSlotStack(ItemStack stack) {
 		setStack(inputSlotId, stack);
 	}
-	
+
 	public void clearVariants() {
 		activeVariants = 0;
 		for (int i = 0; i < this.selectionSize; ++i) {
@@ -137,12 +133,12 @@ public class ChiselSelectionInventory implements Inventory {
 
 	public void updateVariants() {
 		clearVariants();
-		
+
 		ItemStack chiseledItem = getInputSlotStack();
 		if (chiseledItem.isEmpty()) {
 			return;
 		}
-		
+
 		CarvingGroup group = CarvingGroupRegistry.INSTANCE.getGroup(chiseledItem.getItem());
 		if (group != null) {
 			for (CarvingVariant variant : group.getCarvingVariants()) {

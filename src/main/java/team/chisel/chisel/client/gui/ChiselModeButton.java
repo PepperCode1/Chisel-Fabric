@@ -18,6 +18,11 @@ public class ChiselModeButton extends ButtonWidget {
 		this.mode = mode;
 	}
 
+	public ChiselModeButton(int x, int y, @NotNull ChiselMode mode, PressAction onPress, TooltipSupplier tooltipSupplier) {
+		super(x, y, 20, 20, LiteralText.EMPTY, onPress, tooltipSupplier);
+		this.mode = mode;
+	}
+
 	public ChiselMode getMode() {
 		return mode;
 	}

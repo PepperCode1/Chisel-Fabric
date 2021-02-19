@@ -33,7 +33,7 @@ public class SoundUtil {
 			return sound;
 		}
 	}
-	
+
 	public static void playSound(PlayerEntity player, ItemStack chisel, ItemStack source) {
 		CarvingVariant variant = CarvingGroupRegistry.INSTANCE.getVariant(source.getItem());
 		BlockState blockState = variant == null ? null : variant.getBlockState();
@@ -55,7 +55,7 @@ public class SoundUtil {
 	public static void playSound(PlayerEntity player, BlockPos pos, SoundEvent sound) {
 		playSound(player, pos, sound, SoundCategory.BLOCKS);
 	}
-	
+
 	public static void playSound(PlayerEntity player, BlockPos pos, SoundEvent sound, SoundCategory category) {
 		World world = player.getEntityWorld();
 		world.playSound(player, pos, sound, category, 0.3F + 0.7F * world.random.nextFloat(), 0.6F + 0.4F * world.random.nextFloat());

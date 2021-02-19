@@ -36,7 +36,7 @@ public enum ChiselModeImpl implements ChiselMode {
 		public Iterable<BlockPos> getCandidates(PlayerEntity player, BlockPos pos, Direction side) {
 			return Collections.singleton(pos);
 		}
-		
+
 		@Override
 		public Box getBounds(Direction side) {
 			return new Box(0, 0, 0, 1, 1, 1);
@@ -54,7 +54,7 @@ public enum ChiselModeImpl implements ChiselMode {
 			Vec3i offset = side.getVector();
 			return filteredIterable(BlockPos.stream(NEG_ONE.add(offset).add(pos), ONE.subtract(offset).add(pos)), player.world, player.world.getBlockState(pos));
 		}
-		
+
 		@Override
 		public Box getBounds(Direction side) {
 			switch (side.getAxis()) {
@@ -86,12 +86,12 @@ public enum ChiselModeImpl implements ChiselMode {
 			}
 			return filteredIterable(ret.stream(), player.world, player.world.getBlockState(pos));
 		}
-		
+
 		@Override
 		public Box getBounds(Direction side) {
 			return PANEL.getBounds(side);
 		}
-		
+
 		@SuppressWarnings("resource")
 		@Override
 		public long[] getCacheState(BlockPos origin, Direction side) {
@@ -120,23 +120,23 @@ public enum ChiselModeImpl implements ChiselMode {
 			}
 			return filteredIterable(ret.stream(), player.world, player.world.getBlockState(pos));
 		}
-		
+
 		@Override
 		public Box getBounds(Direction side) {
 			return PANEL.getBounds(side);
 		}
-		
+
 		@Override
 		public long[] getCacheState(BlockPos origin, Direction side) {
 			return COLUMN.getCacheState(origin, side);
 		}
-	}, 
+	},
 	CONTIGUOUS() {
 		@Override
 		public Iterable<? extends BlockPos> getCandidates(PlayerEntity player, BlockPos pos, Direction side) {
 			return () -> getContiguousIterator(pos, player.world, Direction.values());
 		}
-		
+
 		@Override
 		public Box getBounds(Direction side) {
 			int r = CONTIGUOUS_RANGE;
@@ -148,7 +148,7 @@ public enum ChiselModeImpl implements ChiselMode {
 		public Iterable<? extends BlockPos> getCandidates(PlayerEntity player, BlockPos pos, Direction side) {
 			return () -> getContiguousIterator(pos, player.world, ArrayUtils.removeElements(Direction.values(), side, side.getOpposite()));
 		}
-		
+
 		@Override
 		public Box getBounds(Direction side) {
 			int r = CONTIGUOUS_RANGE;
@@ -164,33 +164,33 @@ public enum ChiselModeImpl implements ChiselMode {
 		}
 	}
 	;
-	
+
 	// Register all enum constants to the mode registry
 	{
 		ChiselModeRegistry.INSTANCE.register(this);
 	}
-	
+
 	public static final Identifier SPRITES = new Identifier(Chisel.MOD_ID, "textures/gui/mode_icons.png");
 	public static final int CONTIGUOUS_RANGE = 10;
-	
+
 	private static class Node {
 		private BlockPos pos;
 		int distance;
-		
+
 		public Node(BlockPos pos, int distance) {
 			this.pos = pos;
 			this.distance = distance;
 		}
-		
+
 		public BlockPos getPos() {
 			return pos;
 		}
-		
+
 		public int getDistance() {
 			return distance;
 		}
 	}
-	
+
 	private static Iterator<BlockPos> getContiguousIterator(BlockPos origin, World world, Direction[] directionsToSearch) {
 		final BlockState state = world.getBlockState(origin);
 		return new Iterator<BlockPos>() {
@@ -226,19 +226,19 @@ public enum ChiselModeImpl implements ChiselMode {
 			}
 		};
 	}
-	
+
 	private static Iterable<BlockPos> filteredIterable(Stream<BlockPos> source, World world, BlockState state) {
 		return source.filter(p -> world.getBlockState(p) == state)::iterator;
 	}
-	
+
 	private ChiselModeImpl() {
 	}
-	
+
 	@Override
 	public Identifier getSpriteSheet() {
 		return SPRITES;
 	}
-	
+
 	@Override
 	public Point2i getSpritePos() {
 		return new Point2i((ordinal() % 10) * 24, (ordinal() / 10) * 24);

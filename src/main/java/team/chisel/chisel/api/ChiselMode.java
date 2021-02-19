@@ -26,35 +26,35 @@ public interface ChiselMode {
 	Iterable<? extends BlockPos> getCandidates(PlayerEntity player, BlockPos pos, Direction side);
 
 	Box getBounds(Direction side);
-	
+
 	/**
 	 * Implemented implicitly by enums. If your ChiselMode is not an enum constant, this needs to be implemented explicitly.
 	 * 
 	 * @return The name of the mode.
 	 */
 	String name();
-	
+
 	default String getNameKey() {
 		return "chisel.mode." + name().toLowerCase(Locale.ROOT);
 	}
-	
+
 	default String getDescriptionKey() {
 		return getNameKey() + ".desc";
 	}
-	
+
 	default Text getNameText() {
 		return new TranslatableText(getNameKey());
 	}
-	
+
 	default Text getDescriptionText() {
 		return new TranslatableText(getDescriptionKey());
 	}
 
-	default long[] getCacheState(BlockPos origin, Direction side) { // remove?
+	default long[] getCacheState(BlockPos origin, Direction side) { // TODO: Remove?
 		return new long[] {origin.asLong(), side.ordinal()};
 	}
-	
+
 	Identifier getSpriteSheet();
-	
+
 	Point2i getSpritePos();
-} 
+}

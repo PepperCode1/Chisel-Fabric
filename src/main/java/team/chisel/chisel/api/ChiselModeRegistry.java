@@ -9,12 +9,12 @@ import team.chisel.chisel.impl.ChiselModeRegistryImpl;
 
 public interface ChiselModeRegistry {
 	ChiselModeRegistry INSTANCE = ChiselModeRegistryImpl.INSTANCE;
-	
+
 	void register(@NotNull ChiselMode mode);
-	
+
 	@NotNull
 	Collection<ChiselMode> getAllModes();
-	
+
 	@Nullable
 	ChiselMode getModeByName(String name);
 }

@@ -22,7 +22,7 @@ public enum PreviewType { // TODO: Make into registry
 	),
 	SINGLE(50, new BlockPos(0, 0, 0))
 	;
-	
+
 	private static @NotNull BlockPos[] generateBetween(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
 		BlockPos[] ret = new BlockPos[(maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1)];
 		int i = 0;
@@ -35,25 +35,25 @@ public enum PreviewType { // TODO: Make into registry
 		}
 		return ret;
 	}
-	
+
 	private final float scale;
 	private final Set<BlockPos> positions;
 	private final TranslatableText text;
-	
+
 	private PreviewType(float scale, @NotNull BlockPos... positions) {
 		this.scale = scale;
 		this.positions = ImmutableSet.copyOf(positions);
 		this.text = new TranslatableText("chisel.hitech.preview."+name().toLowerCase());
 	}
-	
+
 	public float getScale() {
 		return scale;
 	}
-	
+
 	public Set<BlockPos> getPositions() {
 		return positions;
 	}
-	
+
 	public TranslatableText getText() {
 		return text;
 	}

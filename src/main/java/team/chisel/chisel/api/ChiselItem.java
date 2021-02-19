@@ -104,7 +104,7 @@ public interface ChiselItem {
 	 * @return True if the chisel supports this mode. False otherwise.
 	 */
 	boolean supportsMode(PlayerEntity player, ItemStack chisel, ChiselMode mode);
-	
+
 	/**
 	 * Allows this chisel to provide a different sound for the given {@link CarvingVariant}.
 	 * 
@@ -121,7 +121,7 @@ public interface ChiselItem {
 	default @Nullable SoundEvent getOverrideSound(PlayerEntity player, World world, ItemStack chisel, CarvingVariant target) {
 		return null;
 	}
-	
+
 	/**
 	 * Chisels a stack into another stack, taking into consideration this chisel's damage.
 	 * 
@@ -144,7 +144,7 @@ public interface ChiselItem {
 		if (chisel.isDamageable()) {
 			int damageLeft = chisel.getMaxDamage() - chisel.getDamage();
 			toCraft = Math.min(toCraft, damageLeft);
-			
+
 			if (player.getEntityWorld().isClient()) { // simulate damage on client so interaction manager thinks block is still being broken
 				if (!player.abilities.creativeMode) {
 					chisel.damage(toCraft, player.getRandom(), null);
