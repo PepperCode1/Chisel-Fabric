@@ -3,5 +3,7 @@ package team.chisel.chisel.carving;
 public interface VariantTemplate {
 	String getName();
 	
-	BlockModelTemplate getModel();
+	String getTextureName();
+	
+	BlockModelTemplate getBlockModel();
 }

@@ -41,8 +41,8 @@ public class BlockModelTemplateBuilder {
 	
 	private static String fillPlaceholders(String string, Identifier textureLocation, String groupName, String variantName) {
 		return string
-				.replace("{texture}", textureLocation.getPath())
+				.replace("{path}", textureLocation.getPath())
 				//.replace("{group}", groupName)
-				.replace("{variant}", variantName);
+				.replace("{texture}", variantName);
 	}
 }

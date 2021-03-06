@@ -50,7 +50,7 @@ public class Events {
 				float sin = (float) Math.sin(animation);
 				float color = Math.round(sin * 0.5F + 0.5F);
 				float alpha = Math.abs(sin) * 0.25F;
-				animation += client.getLastFrameDuration() / 9;
+				animation += client.getLastFrameDuration() * 0.12F;
 				
 				buffer.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
 				

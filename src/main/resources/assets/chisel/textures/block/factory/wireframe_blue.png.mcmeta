@@ -3,7 +3,7 @@
         "ctm_version": 1,
         "type": "ctm",
         "textures": [
-            "chisel:block/dirt/reinforcedCobbleDirt_ctm"
+            "chisel:block/factory/wireframe_blue_ctm"
         ]
     }
 }

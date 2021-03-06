@@ -1,9 +1,9 @@
 {
     "ctm": {
         "ctm_version": 1,
-        "type": "ctm",
+        "type": "pillar",
         "textures": [
-            "chisel:block/brownstone/block_ctm"
+            "chisel:block/factory/vent_ctmv"
         ]
     }
 }

@@ -12,18 +12,20 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import team.chisel.chisel.api.CarvingGroup;
+import team.chisel.chisel.api.CarvingGroupRegistry;
 import team.chisel.chisel.api.CarvingVariant;
 
 //FabricModelPredicateProviderRegistry
 public class CarvingGroupBuilder {
 	private Identifier identifier;
-	private String resourceNamespace;
 	private List<Identifier> blockItems = new ArrayList<>();
 	private List<VariantTemplate> variantTemplates = new ArrayList<>();
-	private Identifier textureLocation;
+	private Identifier texturePath;
 	private SoundEvent soundEvent;
 	private BlockProvider blockProvider;
 	private ItemProvider itemProvider;
+	private LootTableProvider lootTableProvider;
+	private String resourceNamespace;
 	private DynamicResourceRegistry drr;
 	
 	public CarvingGroupBuilder addBlockItems(Collection<Identifier> blockItems) {
@@ -70,7 +72,7 @@ public class CarvingGroupBuilder {
 	}
 	
 	public CarvingGroupBuilder texturePath(Identifier texturePath) {
-		this.textureLocation = texturePath;
+		this.texturePath = texturePath;
 		return this;
 	}
 	
@@ -86,6 +88,11 @@ public class CarvingGroupBuilder {
 	
 	public CarvingGroupBuilder itemProvider(ItemProvider itemProvider) {
 		this.itemProvider = itemProvider;
+		return this;
+	}
+	
+	public CarvingGroupBuilder lootTableProvider(LootTableProvider lootTableProvider) {
+		this.lootTableProvider = lootTableProvider;
 		return this;
 	}
 	
@@ -109,18 +116,16 @@ public class CarvingGroupBuilder {
 		
 		int i = 0;
 		for (Identifier blockItem : blockItems) {
-			String variantName = "minecraft_"+String.valueOf(i++);
-			
-			CarvingVariantImpl carvingVariant = new CarvingVariantImpl(carvingGroup, variantName);
-			
-			if (Registry.BLOCK.containsId(blockItem)) {
+			if (Registry.BLOCK.containsId(blockItem) && Registry.ITEM.containsId(blockItem)) {
+				String variantName = "block_item_" + String.valueOf(i++);
+				
+				CarvingVariantImpl carvingVariant = new CarvingVariantImpl(carvingGroup, variantName);
+				
 				carvingVariant.blockState = Registry.BLOCK.get(blockItem).getDefaultState();
-			}
-			if (Registry.ITEM.containsId(blockItem)) {
 				carvingVariant.item = Registry.ITEM.get(blockItem);
+				
+				carvingVariants.add(carvingVariant);
 			}
-			
-			carvingVariants.add(carvingVariant);
 		}
 		
 		for (VariantTemplate template : variantTemplates) {
@@ -141,12 +146,14 @@ public class CarvingGroupBuilder {
 			Registry.register(Registry.ITEM, id, item);
 			
 			drr.register(ResourceType.CLIENT_RESOURCES, new Identifier(resourceNamespace, "blockstates/"+variantPath+".json"), "{\"variants\":{\"\":{\"model\":\""+resourceNamespace+":block/"+variantPath+"\"}}}");
-			drr.register(ResourceType.CLIENT_RESOURCES, new Identifier(resourceNamespace, "models/block/"+variantPath+".json"), template.getModel().getJson(textureLocation, groupPath, variantName));
+			drr.register(ResourceType.CLIENT_RESOURCES, new Identifier(resourceNamespace, "models/block/"+variantPath+".json"), template.getBlockModel().getJson(texturePath, groupPath, template.getTextureName()));
 			drr.register(ResourceType.CLIENT_RESOURCES, new Identifier(resourceNamespace, "models/item/"+variantPath+".json"), "{\"parent\":\""+resourceNamespace+":block/"+variantPath+"\"}");
-			drr.register(ResourceType.SERVER_DATA, new Identifier(resourceNamespace, "loot_tables/blocks/"+variantPath+".json"), "{\"type\":\"minecraft:block\",\"pools\":[{\"rolls\":1,\"entries\":[{\"type\":\"minecraft:item\",\"name\":\""+id.toString()+"\"}],\"conditions\":[{\"condition\":\"minecraft:survives_explosion\"}]}]}");
+			drr.register(ResourceType.SERVER_DATA, new Identifier(resourceNamespace, "loot_tables/blocks/"+variantPath+".json"), lootTableProvider.createLootTable(id));
 			
 			carvingVariants.add(carvingVariant);
 		}
+		
+		CarvingGroupRegistry.INSTANCE.register(identifier, carvingGroup);
 		
 		return carvingGroup;
 	}
@@ -156,10 +163,11 @@ public class CarvingGroupBuilder {
 		builder.blockItems.addAll(blockItems);
 		builder.variantTemplates.addAll(variantTemplates);
 		builder.identifier = identifier;
-		builder.textureLocation = textureLocation;
+		builder.texturePath = texturePath;
 		builder.soundEvent = soundEvent;
 		builder.blockProvider = blockProvider;
 		builder.itemProvider = itemProvider;
+		builder.lootTableProvider = lootTableProvider;
 		builder.resourceNamespace = resourceNamespace;
 		builder.drr = drr;
 		return builder;
@@ -222,5 +230,9 @@ public class CarvingGroupBuilder {
 	
 	public interface ItemProvider {
 		Item createItem(Block block, CarvingVariant carvingVariant);
+	}
+	
+	public interface LootTableProvider {
+		String createLootTable(Identifier id);
 	}
 }
