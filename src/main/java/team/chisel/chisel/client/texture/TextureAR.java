@@ -7,8 +7,8 @@ import net.minecraft.util.math.Direction;
 import team.chisel.ctm.api.client.Renderable;
 import team.chisel.ctm.api.client.TextureContext;
 import team.chisel.ctm.api.client.TextureInfo;
-import team.chisel.ctm.client.render.SpriteUnbakedQuad;
 import team.chisel.ctm.client.render.SubmapImpl;
+import team.chisel.ctm.client.render.UnbakedQuad;
 import team.chisel.ctm.client.texture.AbstractTexture;
 
 public class TextureAR extends AbstractTexture<TextureTypeAR> {
@@ -25,7 +25,7 @@ public class TextureAR extends AbstractTexture<TextureTypeAR> {
 			submapId = 0;
 		}
 
-		SpriteUnbakedQuad quad = unbake(bakedQuad, cullFace);
+		UnbakedQuad quad = unbake(bakedQuad, cullFace);
 		quad.setUVBounds(sprites[0]);
 		quad.applySubmap(SubmapImpl.getX2Submap(submapId));
 		return quad;
